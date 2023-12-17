@@ -8,7 +8,7 @@ rm(list = ls())
 # seed ? verificar al final si es necesario
 set.seed(123)
 # Organizar los gráficos en una cuadrícula de 4x3
-par(mfrow=c(2,2))  # Organizar gráficos en una cuadrícula
+par(mfrow=c(4,3))  # Organizar gráficos en una cuadrícula
 
 
 # activo el directorio de trabajo
@@ -31,6 +31,12 @@ print (columnas_sin_hp)
 mycars <- mtcars[, c("mpg", "hp")]
 names(mycars) <- c("miles_per_gallon","horse_power")
 print(mycars)
+
+# 4.	Añade una nuevo columna al objeto mycars 
+# que contengan los nombres de las filas (esto es, el rownames que contiene el modelo de coche).
+mycars$modelo <- rownames(mycars)
+print(mycars)
+
 
 # 5.	Añade una columna a mycars llamada km_per_litre (1 mpg= 0.425 km/l)
 mycars$km_per_litre <- mycars$miles_per_gallon * 0.425
@@ -96,7 +102,7 @@ nuevos_modelos <- data.frame(
   am = c(1, 0),
   gear = c(6, 6),
   carb = c(2, 4),
-  row.names = c("Tesla_Model_S", "Tesla_Cybertruck")  # Cambié el nombre del Ferrari a "Tesla_Cybertruck"
+  row.names = c("Tesla_Model_S", "Tesla_Cybertruck")  
 )
 
 # Crear el objeto mycars3 uniendo mtcars con los nuevos modelos
