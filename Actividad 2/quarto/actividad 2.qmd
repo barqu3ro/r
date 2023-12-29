@@ -1,0 +1,69 @@
+---
+title: "Actividad 2"
+author: "Jorge Barquero"
+format: html
+editor: visual
+---
+
+## Actividad 2
+
+En base al *data.frame* que contiene los datos del paro de España por localidades en 2019
+
+-   **paro2019**
+
+que se puede obtiene de forma similar a los proporcionados en el script *06-DataPreparation.r* realice las siguientes acciones.
+
+```{r}
+library(dplyr)
+
+datos_paro <- read.table("https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/datos/Paro_por_municipios_2019_csv.csv", 
+                         skip=1,header = TRUE, sep=";", quote = "\"", fileEncoding="latin1")
+head(datos_paro)
+```
+
+Obtenga un data.frame llamado **paro2019MurciaMunicipioMes** con los datos del paro solo de la Comunidad Autónoma correspondiente a la Región de Murcia y con las columnas:
+
+-   Fecha: Date
+
+-   Codigo.Municipio: Factor
+
+-   Municipio: Factor
+
+-   total.Paro.Registrado: Numérico
+
+```{r}
+# Filtrar datos para la región de Murcia
+paro_murcia <- datos_paro[datos_paro$Comunidad.Autónoma == "Murcia, Región de",]
+
+# Seleccionar las columnas requeridas
+paro2019MurciaMunicipioMes <- paro_murcia[, c("Código.mes", "Codigo.Municipio", "Municipio", "total.Paro.Registrado")]
+#paro2019MurciaMunicipioMes <- rename(paro2019MurciaMunicipioMes, Fecha = Código.mes)
+paro2019MurciaMunicipioMes <- rename(paro2019MurciaMunicipioMes, Fecha = Código.mes)
+head(paro2019MurciaMunicipioMes)
+
+```
+
+A partir del data.frame anterior, obtenga la media del paro en cada Municipio durante todo el año en el data.frame paro2019MurciaMunicipio:
+
+-   Codigo.Municipio: Factor. El data.frame tiene que estar ordenado por este campo
+
+-   Municipio: Factor
+
+-   media.Paro.Registrado: Numérico con la media aritmética del paro registrado en los 12 meses del año
+
+```{r}
+
+# Calculate the mean of registered unemployment for each Municipio
+paro2019MurciaMunicipio <- paro2019MurciaMunicipioMes %>%
+    group_by(Codigo.Municipio, Municipio) %>%
+    summarise(media.Paro.Registrado = mean(total.Paro.Registrado))
+
+# Sort the data.frame by Codigo.Municipio
+paro2019MurciaMunicipio <- paro2019MurciaMunicipio %>%
+    arrange(Codigo.Municipio)
+
+head(paro2019MurciaMunicipio)
+
+
+
+```
