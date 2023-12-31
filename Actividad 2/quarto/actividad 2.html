@@ -109,10 +109,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>que se puede obtiene de forma similar a los proporcionados en el script <em>06-DataPreparation.r</em> realice las siguientes acciones.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>datos_paro <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/datos/Paro_por_municipios_2019_csv.csv"</span>, </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">skip=</span><span class="dv">1</span>,<span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">";"</span>, <span class="at">quote =</span> <span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="at">fileEncoding=</span><span class="st">"latin1"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos_paro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerias a utilizar</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'lubridate'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer datos de tabla </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>datos_paro <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/datos/Paro_por_municipios_2019_csv.csv"</span>, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">skip=</span><span class="dv">1</span>,<span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">";"</span>, <span class="at">quote =</span> <span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="at">fileEncoding=</span><span class="st">"latin1"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Save datos_paro in an R data file</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(datos_paro, <span class="at">file =</span> <span class="st">"datos_paro.rdata"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print datos</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos_paro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Código.mes           mes Código.de.CA Comunidad.Autónoma Codigo.Provincia
 1     201901 Enero de 2019            1          Andalucía                4
@@ -159,28 +190,311 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Obtenga un data.frame llamado <strong>paro2019MurciaMunicipioMes</strong> con los datos del paro solo de la Comunidad Autónoma correspondiente a la Región de Murcia y con las columnas:</p>
-<p>Fecha: Date</p>
-<p>Codigo.Municipio: Factor</p>
-<p>Municipio: Factor</p>
-<p>total.Paro.Registrado: Numérico</p>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
-</section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
+<ul>
+<li><p>Fecha: Date</p></li>
+<li><p>Codigo.Municipio: Factor</p></li>
+<li><p>Municipio: Factor</p></li>
+<li><p>total.Paro.Registrado: Numérico</p></li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar datos para la región de Murcia</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>paro_murcia <span class="ot">&lt;-</span> datos_paro[datos_paro<span class="sc">$</span>Comunidad.Autónoma <span class="sc">==</span> <span class="st">"Murcia, Región de"</span>,]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionar las columnas requeridas</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioMes <span class="ot">&lt;-</span> paro_murcia[, <span class="fu">c</span>(<span class="st">"Código.mes"</span>, <span class="st">"Codigo.Municipio"</span>, <span class="st">"Municipio"</span>, <span class="st">"total.Paro.Registrado"</span>)]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Renombrar columna Código.mes por Fecha</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioMes <span class="ot">&lt;-</span> <span class="fu">rename</span>(paro2019MurciaMunicipioMes, <span class="at">Fecha =</span> <span class="st">"Código.mes"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(paro2019MurciaMunicipioMes, <span class="at">file =</span> <span class="st">"paro2019MurciaMunicipioMes.rdata"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(paro2019MurciaMunicipioMes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code>      Fecha Codigo.Municipio    Municipio total.Paro.Registrado
+7384 201901            30001     Abanilla                   406
+7385 201901            30002       Abarán                   655
+7386 201901            30003      Águilas                  2348
+7387 201901            30004    Albudeite                   165
+7388 201901            30005 Alcantarilla                  3850
+7389 201901            30006        Aledo                    56</code></pre>
 </div>
 </div>
-<p>You can add options to executable code like this</p>
+<p>A partir del data.frame anterior, obtenga la media del paro en cada Municipio durante todo el año en el data.frame paro2019MurciaMunicipio:</p>
+<ul>
+<li>Codigo.Municipio: Factor. El data.frame tiene que estar ordenado por este campo</li>
+<li>Municipio: Factor</li>
+<li>media.Paro.Registrado: Numérico con la media aritmética del paro registrado en los 12 meses del año.</li>
+</ul>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la media</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipio <span class="ot">&lt;-</span> paro2019MurciaMunicipioMes <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Codigo.Municipio, Municipio) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">media.Paro.Registrado =</span> <span class="fu">mean</span>(total.Paro.Registrado))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'Codigo.Municipio'. You can override using
+the `.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ordernar por Código.Municipio</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipio <span class="ot">&lt;-</span> <span class="fu">arrange</span>(paro2019MurciaMunicipio, Codigo.Municipio)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Save</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(paro2019MurciaMunicipio, <span class="at">file =</span> <span class="st">"paro2019MurciaMunicipio.rdata"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Imprime</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> (paro2019MurciaMunicipio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
+<pre><code># A tibble: 6 × 3
+# Groups:   Codigo.Municipio [6]
+  Codigo.Municipio Municipio    media.Paro.Registrado
+             &lt;int&gt; &lt;chr&gt;                        &lt;dbl&gt;
+1            30001 Abanilla                     401. 
+2            30002 Abarán                       570. 
+3            30003 Águilas                     2227. 
+4            30004 Albudeite                    145. 
+5            30005 Alcantarilla                3617. 
+6            30006 Aledo                         51.9</code></pre>
 </div>
 </div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+<p>A partir del data.frame anterior y de otro descargado de la Wikipedia correspondiente a los municipios de Murcia desde: https://es.wikipedia.org/wiki/Anexo:Municipios_de_la_Regi%C3%B3n_de_Murcia</p>
+<p>Obtenga el data.frame paro2019MurciaMunicipioPob con las siguientes columnas:</p>
+<ul>
+<li>Codigo.Municipio: Factor. El data.frame tiene que estar ordenado por este campo.</li>
+<li>Municipio: Factor</li>
+<li>media.Paro.Registrado: Numérico</li>
+<li>Poblacion: Numérico (población de dicho municipio)</li>
+<li>porc.Paro.Registrado.Poblacion: Numérico que se calcula como 100*(media.Paro.Registrado/ Poblacion)</li>
+</ul>
+<p>Este data.frame tiene que tener las mismas filas que paro2019MurciaMunicipio, así que si no se ha podido obtener la población de ese municipio las columnas Poblacion y porc.Paro.Registrado.Poblacion contendrán valores NA.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bajar los datos de wikipedia</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest) </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>page <span class="ot">=</span> <span class="fu">read_html</span>(<span class="st">"https://es.wikipedia.org/wiki/Anexo:Municipios_de_la_Regi%C3%B3n_de_Murcia"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>my.table <span class="ot">=</span> <span class="fu">html_node</span>(page, <span class="st">".wikitable"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>my.table <span class="ot">=</span> <span class="fu">html_table</span>(my.table, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(my.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  Municipio      Escudo `Población (2022)[1]​` `Superficie (km²)[2]​`
+  &lt;chr&gt;          &lt;lgl&gt;  &lt;chr&gt;                 &lt;chr&gt;                
+1 Abanilla       NA     6146                  235,62               
+2 Abarán         NA     12&nbsp;992                115,04               
+3 Águilas        NA     36&nbsp;403                251,77               
+4 Albudeite      NA     1390                  17,08                
+5 Alcantarilla   NA     42&nbsp;630                16,24                
+6 Alcázares, Los NA     17&nbsp;603                20,06                
+# ℹ 3 more variables: `Densidad(hab./km²)` &lt;chr&gt;, `Comarca[3]​` &lt;chr&gt;,
+#   Ubicación &lt;lgl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(my.table, <span class="at">file =</span> <span class="st">"DatosWikipedia.rdata"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Unir los dos data.frame</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob <span class="ot">&lt;-</span> <span class="fu">merge</span>(paro2019MurciaMunicipio, my.table, <span class="at">by =</span> <span class="st">"Municipio"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename de columnas  </span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob <span class="ot">&lt;-</span> <span class="fu">rename</span>(paro2019MurciaMunicipioPob, <span class="at">Poblacion =</span> <span class="st">"Población (2022)[1]​"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob <span class="ot">&lt;-</span> <span class="fu">rename</span>(paro2019MurciaMunicipioPob, <span class="at">Superficie =</span> <span class="st">"Superficie (km²)[2]​"</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob <span class="ot">&lt;-</span> <span class="fu">rename</span>(paro2019MurciaMunicipioPob, <span class="at">Comarca =</span> <span class="st">"Comarca[3]​"</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(paro2019MurciaMunicipioPob) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Municipio"             "Codigo.Municipio"      "media.Paro.Registrado"
+[4] "Escudo"                "Poblacion"             "Superficie"           
+[7] "Densidad(hab./km²)"    "Comarca"               "Ubicación"            </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformar a numero para poder hacer calculo</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob<span class="sc">$</span>media.Paro.Registrado <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(paro2019MurciaMunicipioPob<span class="sc">$</span>media.Paro.Registrado)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob<span class="sc">$</span>Poblacion <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(paro2019MurciaMunicipioPob<span class="sc">$</span>Poblacion)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular porc.Paro.Registrado.Poblacion</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob<span class="sc">$</span>porc.Paro.Registrado.Poblacion <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (paro2019MurciaMunicipioPob<span class="sc">$</span>media.Paro.Registrado <span class="sc">/</span> paro2019MurciaMunicipioPob<span class="sc">$</span>Poblacion)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Quitar escudo</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob <span class="ot">&lt;-</span> paro2019MurciaMunicipioPob[, <span class="sc">-</span><span class="dv">4</span>]</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Ordenar por código municipio</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>paro2019MurciaMunicipioPob <span class="ot">&lt;-</span> paro2019MurciaMunicipioPob[<span class="fu">order</span>(paro2019MurciaMunicipioPob<span class="sc">$</span>Codigo.Municipio), ]</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Print del dataframe final</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(paro2019MurciaMunicipioPob, <span class="at">file =</span> <span class="st">"paro2019MurciaMunicipioPob.rdata"</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(paro2019MurciaMunicipioPob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Municipio Codigo.Municipio media.Paro.Registrado Poblacion
+1                   Abanilla            30001             401.08333      6146
+2                     Abarán            30002             569.50000        NA
+3                    Águilas            30003            2227.08333        NA
+4                  Albudeite            30004             144.75000      1390
+5               Alcantarilla            30005            3617.41667        NA
+7                      Aledo            30006              51.91667      1110
+8                   Alguazas            30007             731.58333      9965
+9           Alhama de Murcia            30008            1391.25000        NA
+10                   Archena            30009            1114.16667        NA
+11                    Beniel            30010             523.58333        NA
+12                    Blanca            30011             357.91667      6681
+13                    Bullas            30012             909.33333        NA
+14                Calasparra            30013             770.25000        NA
+15            Campos del Río            30014             160.83333      2090
+16       Caravaca de la Cruz            30015            1882.91667        NA
+17                 Cartagena            30016           16119.00000        NA
+18                   Cehegín            30017            1389.58333        NA
+19                     Ceutí            30018             756.83333        NA
+20                     Cieza            30019            2275.08333        NA
+21                   Fortuna            30020             813.25000        NA
+22    Fuente Álamo de Murcia            30021             748.83333        NA
+23                   Jumilla            30022            1783.25000        NA
+24                  Librilla            30023             342.41667      5619
+25                     Lorca            30024            4788.25000        NA
+26                    Lorquí            30025             474.41667      7510
+27                  Mazarrón            30026            1746.66667        NA
+28          Molina de Segura            30027            4938.75000        NA
+29                 Moratalla            30028             735.75000      7753
+30                      Mula            30029            1126.83333        NA
+31                    Murcia            30030           30278.16667        NA
+32                      Ojós            30031              42.00000       522
+33                    Pliego            30032             211.83333      3901
+34          Puerto Lumbreras            30033             674.25000        NA
+35                    Ricote            30034              86.50000      1275
+36                San Javier            30035            2027.58333        NA
+37     San Pedro del Pinatar            30036            1845.50000        NA
+39             Torre-Pacheco            30037            1886.16667        NA
+40   Torres de Cotillas, Las            30038            1537.00000        NA
+41                    Totana            30039            1437.16667        NA
+42                      Ulea            30040              49.25000       882
+43                 Unión, La            30041            1875.41667        NA
+44 Villanueva del Río Segura            30042             187.58333      3469
+45                     Yecla            30043            2679.00000        NA
+38                 Santomera            30901             903.33333        NA
+6             Alcázares, Los            30902             966.33333        NA
+   Superficie Densidad(hab./km²)                      Comarca Ubicación
+1      235,62              26,08                     Oriental        NA
+2      115,04             112,93         Vega Alta del Segura        NA
+3      251,77             144,59             Alto Guadalentín        NA
+4       17,08              81,38                     Río Mula        NA
+5       16,24            2625,00 Área Metropolitana de Murcia        NA
+7       49,54              22,41             Bajo Guadalentín        NA
+8       23,84             417,99        Vega Media del Segura        NA
+9      313,03              72,49             Bajo Guadalentín        NA
+10      16,38            1197,92              Valle de Ricote        NA
+11      10,11            1145,20 Área Metropolitana de Murcia        NA
+12      87,17              76,64         Vega Alta del Segura        NA
+13      82,50             140,93                     Noroeste        NA
+14     185,59              54,76                     Noroeste        NA
+15      47,01              44,46                     Río Mula        NA
+16     860,20              29,90                     Noroeste        NA
+17     560,19             387,30           Campo de Cartagena        NA
+18     300,12              49,01                     Noroeste        NA
+19      10,30            1203,01        Vega Media del Segura        NA
+20     366,20              96,39         Vega Alta del Segura        NA
+21     149,39              72,58                     Oriental        NA
+22     274,19              64,15           Campo de Cartagena        NA
+23     969,71              27,43                    Altiplano        NA
+24      56,63              99,22             Bajo Guadalentín        NA
+25    1675,27              57,99             Alto Guadalentín        NA
+26      15,73             477,43        Vega Media del Segura        NA
+27     318,17             105,92             Bajo Guadalentín        NA
+28     169,37             441,41        Vega Media del Segura        NA
+29     952,61               8,14                     Noroeste        NA
+30     633,84              27,19                     Río Mula        NA
+31     885,11             523,08 Área Metropolitana de Murcia        NA
+32      45,72              11,42              Valle de Ricote        NA
+33      29,34             132,96                     Río Mula        NA
+34     144,62             114,53             Alto Guadalentín        NA
+35      86,83              14,68              Valle de Ricote        NA
+36      75,36             457,38  Campo de CartagenaMar Menor        NA
+37      22,35            1200,31  Campo de CartagenaMar Menor        NA
+39       &lt;NA&gt;               &lt;NA&gt;                         &lt;NA&gt;        NA
+40      38,76             567,08        Vega Media del Segura        NA
+41     287,28             112,53             Bajo Guadalentín        NA
+42      40,02              22,04              Valle de Ricote        NA
+43      25,72             803,11           Campo de Cartagena        NA
+44      13,14             264,00              Valle de Ricote        NA
+45     605,26              58,21                    Altiplano        NA
+38      44,12             365,48 Área Metropolitana de Murcia        NA
+6       20,06             877,52  Campo de CartagenaMar Menor        NA
+   porc.Paro.Registrado.Poblacion
+1                        6.525925
+2                              NA
+3                              NA
+4                       10.413669
+5                              NA
+7                        4.677177
+8                        7.341529
+9                              NA
+10                             NA
+11                             NA
+12                       5.357232
+13                             NA
+14                             NA
+15                       7.695375
+16                             NA
+17                             NA
+18                             NA
+19                             NA
+20                             NA
+21                             NA
+22                             NA
+23                             NA
+24                       6.093908
+25                             NA
+26                       6.317133
+27                             NA
+28                             NA
+29                       9.489875
+30                             NA
+31                             NA
+32                       8.045977
+33                       5.430232
+34                             NA
+35                       6.784314
+36                             NA
+37                             NA
+39                             NA
+40                             NA
+41                             NA
+42                       5.583900
+43                             NA
+44                       5.407418
+45                             NA
+38                             NA
+6                              NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(paro2019MurciaMunicipioPob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Municipio Codigo.Municipio media.Paro.Registrado Poblacion Superficie
+1     Abanilla            30001             401.08333      6146     235,62
+2       Abarán            30002             569.50000        NA     115,04
+3      Águilas            30003            2227.08333        NA     251,77
+4    Albudeite            30004             144.75000      1390      17,08
+5 Alcantarilla            30005            3617.41667        NA      16,24
+7        Aledo            30006              51.91667      1110      49,54
+  Densidad(hab./km²)                      Comarca Ubicación
+1              26,08                     Oriental        NA
+2             112,93         Vega Alta del Segura        NA
+3             144,59             Alto Guadalentín        NA
+4              81,38                     Río Mula        NA
+5            2625,00 Área Metropolitana de Murcia        NA
+7              22,41             Bajo Guadalentín        NA
+  porc.Paro.Registrado.Poblacion
+1                       6.525925
+2                             NA
+3                             NA
+4                      10.413669
+5                             NA
+7                       4.677177</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(paro2019MurciaMunicipioPob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Municipio"                      "Codigo.Municipio"              
+[3] "media.Paro.Registrado"          "Poblacion"                     
+[5] "Superficie"                     "Densidad(hab./km²)"            
+[7] "Comarca"                        "Ubicación"                     
+[9] "porc.Paro.Registrado.Poblacion"</code></pre>
+</div>
+</div>
 </section>
 
 </main>

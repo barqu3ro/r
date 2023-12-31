@@ -14,12 +14,18 @@ En base al *data.frame* que contiene los datos del paro de España por localidad
 que se puede obtiene de forma similar a los proporcionados en el script *06-DataPreparation.r* realice las siguientes acciones.
 
 ```{r}
+# Librerias a utilizar
 library(dplyr)
 library(lubridate)
 
-
+# Leer datos de tabla 
 datos_paro <- read.table("https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/datos/Paro_por_municipios_2019_csv.csv", 
-                         skip=1,header = TRUE, sep=";", quote = "\"", fileEncoding="latin1" , trim=TRUE)
+                         skip=1,header = TRUE, sep=";", quote = "\"", fileEncoding="latin1")
+
+# Save datos_paro in an R data file
+save(datos_paro, file = "datos_paro.rdata")
+
+# Print datos
 head(datos_paro)
 ```
 
@@ -34,9 +40,6 @@ Obtenga un data.frame llamado **paro2019MurciaMunicipioMes** con los datos del p
 -   total.Paro.Registrado: Numérico
 
 ```{r}
-# Uso de fechas 
-library(lubridate)
-
 # Filtrar datos para la región de Murcia
 paro_murcia <- datos_paro[datos_paro$Comunidad.Autónoma == "Murcia, Región de",]
 
@@ -46,17 +49,7 @@ paro2019MurciaMunicipioMes <- paro_murcia[, c("Código.mes", "Codigo.Municipio",
 # Renombrar columna Código.mes por Fecha
 paro2019MurciaMunicipioMes <- rename(paro2019MurciaMunicipioMes, Fecha = "Código.mes")
 
-
-colnames(paro2019MurciaMunicipioMes) <- c("fecha","comunidad_autonoma","codigo_municipio","municipio","total_paro_registrado")
-paro2019MurciaMunicipioMes <- subset(paro2019MurciaMunicipioMes, select = -comunidad_autonoma)
-str(paro2019MurciaMunicipioMes)
-
-
-# TODO: cambiar el formato de la fecha 
-# Format the Fecha column to DD/MM/YYYY
-# Format the Fecha column to DD/MM/YYYY in another column TEST
-
-
+save(paro2019MurciaMunicipioMes, file = "paro2019MurciaMunicipioMes.rdata")
 head(paro2019MurciaMunicipioMes)
 ```
 
@@ -67,75 +60,76 @@ A partir del data.frame anterior, obtenga la media del paro en cada Municipio du
 -   media.Paro.Registrado: Numérico con la media aritmética del paro registrado en los 12 meses del año.
 
 ```{r}
-# Calculate the mean of paro registered in each Municipio
 
-#Calcula la media aritmética de paros registrados en cada municipio
+# Calcular la media
 paro2019MurciaMunicipio <- paro2019MurciaMunicipioMes %>%
     group_by(Codigo.Municipio, Municipio) %>%
     summarise(media.Paro.Registrado = mean(total.Paro.Registrado))
 
-# Ordena el data.frame por Codigo.Municipio
+# Ordernar por Código.Municipio
 paro2019MurciaMunicipio <- arrange(paro2019MurciaMunicipio, Codigo.Municipio)
+
+# Save
+save(paro2019MurciaMunicipio, file = "paro2019MurciaMunicipio.rdata")
 
 # Imprime
 head (paro2019MurciaMunicipio)
-
-#plot(paro2019MurciaMunicipio)
 ```
 
-A partir del data.frame anterior y de otro descargado de la Wikipedia correspondiente a los municipios de Murcia desde: https://es.wikipedia.org/wiki/Anexo:Municipios_de_la_Regi%C3%B3n_de_Murcia 
+A partir del data.frame anterior y de otro descargado de la Wikipedia correspondiente a los municipios de Murcia desde: https://es.wikipedia.org/wiki/Anexo:Municipios_de_la_Regi%C3%B3n_de_Murcia
 
-Obtenga el data.frame  paro2019MurciaMunicipioPob con las siguientes columnas:
+Obtenga el data.frame paro2019MurciaMunicipioPob con las siguientes columnas:
 
 -   Codigo.Municipio: Factor. El data.frame tiene que estar ordenado por este campo.
 -   Municipio: Factor
 -   media.Paro.Registrado: Numérico
 -   Poblacion: Numérico (población de dicho municipio)
--   porc.Paro.Registrado.Poblacion: Numérico que se calcula como 100*(media.Paro.Registrado/ Poblacion)
+-   porc.Paro.Registrado.Poblacion: Numérico que se calcula como 100\*(media.Paro.Registrado/ Poblacion)
 
 Este data.frame tiene que tener las mismas filas que paro2019MurciaMunicipio, así que si no se ha podido obtener la población de ese municipio las columnas Poblacion y porc.Paro.Registrado.Poblacion contendrán valores NA.
 
 ```{r}
-# Download the Wikipedia data
+# Bajar los datos de wikipedia
+library(rvest) 
 
 page = read_html("https://es.wikipedia.org/wiki/Anexo:Municipios_de_la_Regi%C3%B3n_de_Murcia")
-# Obtain the piece of the web page that corresponds to the "wikitable" node
 my.table = html_node(page, ".wikitable")
-# Convert the html table element into a data frame
 my.table = html_table(my.table, fill = TRUE)
+
 
 head(my.table)
 
+save(my.table, file = "DatosWikipedia.rdata")
 
-head (wiki_data)
-# Clean the Municipio column
-wiki_data$Municipio <- gsub("\\[.*\\]", "", wiki_data$Municipio)
+# Unir los dos data.frame
+paro2019MurciaMunicipioPob <- merge(paro2019MurciaMunicipio, my.table, by = "Municipio", all.x = TRUE)
 
-# Merge the data frames
-paro2019MurciaMunicipioPob <- merge(paro2019MurciaMunicipio, wiki_data, by = "Municipio", all.x = TRUE)
+# Rename de columnas  
+paro2019MurciaMunicipioPob <- rename(paro2019MurciaMunicipioPob, Poblacion = "Población (2022)[1]​")
+paro2019MurciaMunicipioPob <- rename(paro2019MurciaMunicipioPob, Superficie = "Superficie (km²)[2]​")
+paro2019MurciaMunicipioPob <- rename(paro2019MurciaMunicipioPob, Comarca = "Comarca[3]​")
 
-# Calculate the porc.Paro.Registrado.Poblacion
+names(paro2019MurciaMunicipioPob) 
+
+# Transformar a numero para poder hacer calculo
+paro2019MurciaMunicipioPob$media.Paro.Registrado <- as.numeric(paro2019MurciaMunicipioPob$media.Paro.Registrado)
+paro2019MurciaMunicipioPob$Poblacion <- as.numeric(paro2019MurciaMunicipioPob$Poblacion)
+
+# Calcular porc.Paro.Registrado.Poblacion
 paro2019MurciaMunicipioPob$porc.Paro.Registrado.Poblacion <- 100 * (paro2019MurciaMunicipioPob$media.Paro.Registrado / paro2019MurciaMunicipioPob$Poblacion)
 
-# Sort the data frame by Codigo.Municipio
+# Quitar escudo
+paro2019MurciaMunicipioPob <- paro2019MurciaMunicipioPob[, -4]
+
+# Ordenar por código municipio
 paro2019MurciaMunicipioPob <- paro2019MurciaMunicipioPob[order(paro2019MurciaMunicipioPob$Codigo.Municipio), ]
 
-# Print the resulting data frame
+# Print del dataframe final
+
+save(paro2019MurciaMunicipioPob, file = "paro2019MurciaMunicipioPob.rdata")
+print(paro2019MurciaMunicipioPob)
 head(paro2019MurciaMunicipioPob)
+names(paro2019MurciaMunicipioPob)
 
-```
 
-```{r}
-library(rvest)
-# Reading in the table from Wikipedia
-page = read_html("https://en.wikipedia.org/wiki/List_of_U.S._states_by_life_expectancy")
-# Obtain the piece of the web page that corresponds to the "wikitable" node
-my.table = html_node(page, ".wikitable")
-# Convert the html table element into a data frame
-my.table = html_table(my.table, fill = TRUE)
-# Extracting and tidying a single column from the table and adding row names
-x = as.numeric(gsub("\\[.*","",my.table[,4]))
-names(x) = gsub("\\[.*","",my.table[,2])
-# Excluding non-states and averages from the table
-life.expectancy = x[!names(x) %in% c("United States", "Northern Mariana Islands", "Guam", "American Samoa", "Puerto Rico", "U.S. Virgin Islands")]
 ```
