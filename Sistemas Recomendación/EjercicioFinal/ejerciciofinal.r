@@ -165,7 +165,6 @@ recomendaciones_final <- recomendaciones[1:Top]
 # Mostrar las recomendaciones
 recomendaciones_final
 
-# Get the productos that match the items in recomendaciones_final
 productos_recomendados <- productos[recomendaciones_final, ]
 
 # Print the productos
